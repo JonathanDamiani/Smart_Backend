@@ -2,13 +2,13 @@ import { gql } from 'apollo-server-express';
 
 export default gql `
     extend type Query {
-        getAllTasks: [Task!]
+        getAllTasks: [Task!] @isAuth
     },
 
     extend type Mutation {
-        createNewTask( newTask: TaskInput! ): Task! 
-        editTaskByID ( id: ID!, updatedTask: TaskInput! ) : Task!
-        deleteTaskByID (id: ID!) : TaskNotification!
+        createNewTask( newTask: TaskInput! ): Task! @isAuth
+        editTaskByID ( id: ID!, updatedTask: TaskInput! ) : Task! @isAuth
+        deleteTaskByID (id: ID!) : TaskNotification! @isAuth
     }
 
     input TaskInput {

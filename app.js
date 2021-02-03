@@ -1,21 +1,32 @@
 import express from 'express';
 import { ApolloServer } from 'apollo-server-express';
 import { typeDefs, resolvers } from './src/apollo';
+import { schemaDirectives } from './src/apollo/directives'
 import { success, error } from 'consola';
 import mongoose from 'mongoose';
 import { PORT, MODE, DB_URI } from './src/config/';
 import * as ServerModels from './src/models';
+import AuthMiddleware from './src/middlewares/auth';
 
 const server = new ApolloServer({
     typeDefs,
     resolvers,
+    schemaDirectives,
     playground: MODE === 'dev',
-    context: {
-        ...ServerModels
+    context: ({req}) => {
+        let {isAuth, user} = req;
+        return {
+            req,
+            isAuth,
+            user,
+            ...ServerModels
+        }
     }
 })
 
 const app = express();
+
+app.use(AuthMiddleware);
 
 const StartServer = async () => {
     try {
